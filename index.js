@@ -4,14 +4,14 @@ module.exports = flatten
 flatten.flatten = flatten
 flatten.unflatten = unflatten
 
-function flatten (target, opts) {
+function flatten(target, opts) {
   opts = opts || {}
 
   var delimiter = opts.delimiter || '.'
   var maxDepth = opts.maxDepth
   var output = {}
 
-  function step (object, prev, currentDepth) {
+  function step(object, prev, currentDepth) {
     currentDepth = currentDepth || 1
     Object.keys(object).forEach(function (key) {
       var value = object[key]
@@ -41,16 +41,22 @@ function flatten (target, opts) {
   return output
 }
 
-function unflatten (target, opts) {
+function unflatten(target, opts) {
   opts = opts || {}
 
   if (opts.maxDepth === 0) {
     return target
   }
 
+  function isLetter(str) {
+    const firstChar = str.charAt(0);
+    return !!firstChar.match(/[a-z]/i);
+  }
+
   var delimiter = opts.delimiter || '.'
   var overwrite = opts.overwrite || false
   var maxDepth = opts.maxDepth || Infinity
+  var letterCheck = opts.letterCheck || false
   var result = {}
 
   var isbuffer = isBuffer(target)
@@ -60,7 +66,7 @@ function unflatten (target, opts) {
 
   // safely ensure that the key is
   // an integer.
-  function getkey (key) {
+  function getkey(key) {
     var parsedKey = Number(key)
 
     return (
@@ -76,7 +82,8 @@ function unflatten (target, opts) {
   })
 
   sortedKeys.forEach(function (key) {
-    var split = key.split(delimiter)
+    var canSplit = letterCheck ? isLetter(key) : true;
+    var split = canSplit ? key.split(delimiter): [key];
     var key1 = getkey(split.shift())
     var key2 = getkey(split[0])
     var recipient = result
@@ -97,7 +104,7 @@ function unflatten (target, opts) {
       if ((overwrite && !isobject) || (!overwrite && recipient[key1] == null)) {
         recipient[key1] = (
           typeof key2 === 'number' &&
-          !opts.object ? [] : {}
+            !opts.object ? [] : {}
         )
       }
 

@@ -115,6 +115,28 @@ unflatten({
 // }
 ```
 
+### checkLetter
+
+Check for first character of the key and only if it starts with letter then it proceed to flatten.
+
+``` javascript
+unflatten({
+    '**/.you': 'ipsum',
+    'hello**.you': 'lorem',
+    'hello.other.world': 'foo'
+}, { object: true })
+
+// '**/.you': 'ipsum',
+// hello**: {
+//     you: 'lorem',
+// },
+// hello: {
+//    other: { 
+//      world: 'foo' 
+//    }
+//}
+```
+
 ### overwrite
 
 When enabled, existing keys in the unflattened object may be overwritten if they cannot hold a newly encountered nested value:
@@ -158,6 +180,8 @@ flatten({
 //   'key3.a': { b: { c: 2 } }
 // }
 ```
+
+
 
 ## Command Line Usage
 
